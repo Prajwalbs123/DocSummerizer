@@ -1,0 +1,26 @@
+﻿ var fields = new List<SearchField>
+ {
+     new SearchField("id", SearchFieldDataType.String)
+     {
+         IsKey = true,  
+         IsSearchable = false,  
+         IsFilterable = true,  
+         IsSortable = true,  
+     },
+     new SearchField("embedding", SearchFieldDataType.Collection(SearchFieldDataType.Single))
+     {
+               
+         IsSearchable = true,  
+         IsFilterable = false,  
+         IsSortable = false,  
+         VectorSearchDimensions = 1536,
+         VectorSearchProfileName = "hnsw"
+
+     },
+     new SearchField("original_text", SearchFieldDataType.Collection(SearchFieldDataType.String))
+     {
+         IsSearchable = true,  
+         IsFilterable = false,  
+         IsSortable = true,  
+     }
+ };

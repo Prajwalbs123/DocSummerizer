@@ -1,0 +1,35 @@
+﻿@page "/FileUpload"
+@using DocQuery.Contracts
+@using DocQuery.Model
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+@inject NavigationManager Navigation
+@inject ILogger<FileUpload> logger;
+@inject IApiCallService apiCallService;
+@inject IFeatureDataService featureService;
+
+@if(featureService.IsUploadFeatureEnabled){
+    <PageTitle>UploadFiles</PageTitle>
+
+    <h3>Upload File to Index(Azure Search)</h3>
+    <div class="file-area">
+        <select>
+            <option selected disabled>Uploaded Files </option>
+            @foreach (var val in SharedDataModel.SharedFileList)
+            {
+                <option disabled>@val</option>
+            }
+        </select>
+        <div class="drop-zone" @ref="dropzoneElement">
+            <div>Drop a pdf file or select a pdf file</div>
+        </div>
+        <InputFile OnChange="@OnChange" @ref="inputFile" />
+        <button class="btn btn-dark" type="button" onclick="@Get">GetSummary</button>
+        <button class="btn btn-danger" type="button" onclick="@Send">Send</button>
+    </div>
+    <div>
+        <p>@summaryResult</p>
+    </div>
+}
+
+

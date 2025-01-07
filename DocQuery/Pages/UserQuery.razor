@@ -1,0 +1,39 @@
+﻿@page "/Query"
+@using Microsoft.AspNetCore.Components.Web
+@using DocQuery.Contracts;
+@using DocQuery.Model
+@inject ILogger<UserQuery> logger;
+@inject IApiCallService apiCallService;
+
+<PageTitle>AskQuery</PageTitle>
+
+<h1>Summarize your Documents</h1>
+<div class="params">
+<select @bind="@fileName">
+    <option value=null selected>select a File</option>
+    @foreach (var val in SharedDataModel.SharedFileList)
+    {
+
+        <option value="@val">@val</option>
+    }
+</select>
+<div class="slider">
+        <pre>Number of Sentences : @noSentence</pre>
+        <input type="range" min="1" max="10" step="1" @bind="noSentence" />
+</div>
+</div>
+<div class="messages" >
+    @for (int i = 0; i < SharedDataModel.Responses.Count && i < SharedDataModel.Messages.Count; i++)
+    {
+        var currIdx = i;
+        <div class="message">@(currIdx + 1)) @SharedDataModel.Messages[i]</div>
+        <div class="response">@((MarkupString)SharedDataModel.Responses[i])<div class="date-time">@SharedDataModel.datetime[i]</div></div>
+        <button @onclick="() => Regenerate(currIdx)" >Regenerate</button>
+    }
+</div>
+<div class="chat-container">
+    <input type="text" @bind="messageInput" placeholder="Type your message here..." class="message-input" />
+    
+    <button @onclick="SendMessage" class="send-button">Send</button>
+</div>
+

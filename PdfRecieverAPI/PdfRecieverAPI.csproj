@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e7aa2479-1ad0-4e0c-8f5c-e875102c8bd2</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="itext7" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="4.0.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.30.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GptDLL\GptDLL.csproj" />
+    <ProjectReference Include="..\PdfReadChunkDLL\PdfReadChunkDLL.csproj" />
+    <ProjectReference Include="..\QuerySearchDLL\QuerySearchDLL.csproj" />
+    <ProjectReference Include="..\StoreEmbeddingsDLL\StoreEmbeddingsDLL.csproj" />
+  </ItemGroup>
+
+</Project>
