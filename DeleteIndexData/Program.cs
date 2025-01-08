@@ -2,9 +2,20 @@
 using System.Text.Json;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using Microsoft.Extensions.Configuration;
 
-var index = "demo-index-2";
-var searchClient = new SearchClient(new Uri("https://research-paper-search-service.search.windows.net"), index, new Azure.AzureKeyCredential("RRZc2vkyxnIs3wMmBk4p1QM3zQi9teyqHVQhsa55xcAzSeBzJW8x"));
+var path = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+IConfiguration configuration = new ConfigurationBuilder()
+    .AddJsonFile(Path.Combine(path!,"appsettings.json"))
+    .Build();
+
+var section = configuration.GetSection("SearchCred");
+var index = section.GetSection("index").Value;
+var searchClient = new SearchClient(
+    new Uri(section.GetSection("uri").Value!),
+    index,
+    new Azure.AzureKeyCredential(section.GetSection("key").Value!)
+    );
 
 var searchAll = new SearchOptions()
 {
