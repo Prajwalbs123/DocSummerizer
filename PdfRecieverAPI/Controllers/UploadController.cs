@@ -15,9 +15,8 @@ namespace PdfRecieverAPI.Controllers
     /// <param name="_logger">DI of Ilogger to Log information and errors in console</param>
     [Route("api/[controller]")]
 	[ApiController]
-	[EnableCors("cors")]
 	[FeatureGate("Upload")]
-	public class UploadController(IUploadService uploadService, ILogger<UploadController> _logger,IFeatureManager featureManager) : ControllerBase, IUploadController
+	public class UploadController(IUploadService uploadService, ILogger<UploadController> _logger,IFeatureManager featureManager) : ControllerBase
 	{
 		private readonly IUploadService uploadService = uploadService;
 		private readonly ILogger<UploadController> _logger = _logger;
@@ -27,6 +26,12 @@ namespace PdfRecieverAPI.Controllers
 		public async Task<IActionResult> IsFeatureEnabled()
 		{
 			return Ok(await featureManager.IsEnabledAsync("Upload"));
+		}
+		[HttpGet("DeleteAllFiles")]
+		public async Task<IActionResult> DeleteAllFiles()
+		{
+            _logger.LogInformation("Deleting files...");
+            return Ok(await uploadService.DeleteAllFilesAsync());
 		}
 
 		/// <summary>

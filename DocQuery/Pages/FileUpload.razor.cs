@@ -1,4 +1,7 @@
+
 using System.Net.Http.Headers;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -139,9 +142,21 @@ namespace DocQuery.Pages
 			}
 			catch(Exception ex) 
 			{
-				logger.LogError(ex,$"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 		}
+
+		public async void DeleteIndexData()
+		{
+			try
+			{
+				var index = await apiCallService.DeleteAllFiles();
+                await JS.InvokeVoidAsync("alert", $"{index} data is deleted");
+                await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
+                logger.LogInformation($"{index} data is deleted");
+            }
+			catch (Exception ex) { logger.LogError($"Error: {ex.Message}"); }
+        }
 
 		/// <summary>
 		/// Disposal of all the events at the end.

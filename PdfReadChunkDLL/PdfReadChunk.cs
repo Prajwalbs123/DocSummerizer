@@ -13,14 +13,14 @@ namespace PdfReadChunkDLL
 		private readonly IConfiguration configuration = configuration;
 		private readonly ILogger<PdfReadChunk> _logger = _logger;
 		private readonly Tokenizer tokenizer = TiktokenTokenizer.CreateForModel(configuration["AzureCred:model"]!);
+		private readonly int inputTokensize = Convert.ToInt32(Convert.ToInt32(configuration["AzureCred:modelMaxTokens"]) * 0.25);
 
-
-		/// <summary>
-		///		Utilize iText.Kernel.Pdf to read text contents from pdf file.
-		/// </summary>
-		/// <param name="pdfFile">IFormfile - pdffile</param>
-		/// <returns>string text - text contents of pdf</returns>
-		private string ReadPdf(IFormFile pdfFile)
+        /// <summary>
+        ///		Utilize iText.Kernel.Pdf to read text contents from pdf file.
+        /// </summary>
+        /// <param name="pdfFile">IFormfile - pdffile</param>
+        /// <returns>string text - text contents of pdf</returns>
+        private string ReadPdf(IFormFile pdfFile)
 		{
 			_logger.LogInformation("Reading Pdf");
 			string text = "";
@@ -52,7 +52,7 @@ namespace PdfReadChunkDLL
 		public string GetText(IFormFile pdfFile)
 		{
 			string text = ReadPdf(pdfFile);
-			int EndIndex = tokenizer.GetIndexByTokenCount(text, maxTokenCount: 2000, out string? normalizedText, out int count);
+			int EndIndex = tokenizer.GetIndexByTokenCount(text, maxTokenCount: inputTokensize, out string? normalizedText, out int count);
 			EndIndex = Math.Min(EndIndex, text.Length - 1);
 			return text.Substring(0, EndIndex + 1)!;
 		}
@@ -70,10 +70,10 @@ namespace PdfReadChunkDLL
 			try
 			{
 				string text = ReadPdf(file);
-				int startIndex = 0;
+                int startIndex = 0;
 				while (startIndex < text.Length)
 				{
-					int EndIndex = startIndex + tokenizer.GetIndexByTokenCount(text, maxTokenCount: 2000, out string? normalizedText, out int count);
+					int EndIndex = startIndex + tokenizer.GetIndexByTokenCount(text, maxTokenCount: inputTokensize, out string? normalizedText, out int count);
 					EndIndex = Math.Min(EndIndex, text.Length - 1);
 					chunks.Add(text.Substring(startIndex, EndIndex - startIndex + 1)!);
 					startIndex += EndIndex - 1;

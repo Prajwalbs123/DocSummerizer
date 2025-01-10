@@ -8,7 +8,7 @@ namespace GptDLL
 
 	public class GptCall(IConfiguration configuration, ILogger<GptCall> _logger) : IGptCall
 	{
-		private static readonly ChatHistory history = [];
+		//private static readonly ChatHistory history = [];
 		private readonly IConfiguration configuration = configuration;
 		private readonly ILogger<GptCall> _logger = _logger;
 		private readonly AzureOpenAIChatCompletionService chatService = new AzureOpenAIChatCompletionService(
@@ -30,6 +30,7 @@ namespace GptDLL
 			string gptResponse = string.Empty;
 			try
 			{
+				ChatHistory history = [];
 				history.AddSystemMessage($"You are a useful assistant who provides appropriate responses to user queries based on the provided context.");
 				history.AddUserMessage($@"-If there is appropriate context : {context} available for the user query: {query}, summarize the context based on the query in at most the specified number of sentences : {noSentence}, considering the given reference : {reference}.
 				 -Else, generate the response based on references from the Internet for the query : {query} in at most the specified number of sentences : {noSentence}, and specify the unavailability of context clearly to the user, and provide references for your response.
@@ -64,8 +65,9 @@ namespace GptDLL
 			_logger.LogInformation("fileText is being summarized by LLM");
 			string GptSummaryResponse = string.Empty;
 			try
-			{
-				history.AddSystemMessage("You are a useful assistant who summarizes the provided fileText");
+            {
+                ChatHistory history = [];
+                history.AddSystemMessage("You are a useful assistant who summarizes the provided fileText");
 				history.AddUserMessage($@"Summarize {fileText}, referenced from {fileName}");
 				var response = await chatService.GetChatMessageContentAsync(history);
 				_logger.LogInformation("Summarization completed");

@@ -64,5 +64,21 @@ namespace PdfRecieverAPI.Services
 				return $"{file.FileName} uploaded failed";
 			}
 		}
-	}
+
+		public async Task<string> DeleteAllFilesAsync()
+		{
+			string indexName = string.Empty;
+			try
+			{
+				indexName = await storeEmbeddedData.DeleteAllFiles();
+                _logger.LogInformation($"{indexName} Data Deleted Successful");
+            }
+            catch(Exception ex)
+			{
+				_logger.LogError($"Error: {ex.Message}");
+			}
+			return indexName;
+		}
+
+    }
 }

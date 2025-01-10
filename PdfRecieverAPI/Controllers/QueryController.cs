@@ -16,8 +16,7 @@ namespace PdfRecieverAPI.Controllers
 	/// <param name="_logger">DI of ILogger to add logging of information and errors</param>
 	[Route("api/[controller]")]
 	[ApiController]
-	[EnableCors("cors")]
-	public class QueryController(IQueryService queryService, ILogger<QueryController> _logger) : ControllerBase, IQueryController
+	public class QueryController(IQueryService queryService, ILogger<QueryController> _logger) : ControllerBase
 	{
 		private readonly IQueryService queryService = queryService;
 		private readonly ILogger<QueryController> _logger = _logger;

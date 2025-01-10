@@ -33,7 +33,7 @@ namespace PdfRecieverAPI.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 			return files;
 		}
@@ -105,7 +105,7 @@ namespace PdfRecieverAPI.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return GptResponse;

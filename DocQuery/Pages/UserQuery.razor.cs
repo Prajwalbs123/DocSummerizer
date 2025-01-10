@@ -7,7 +7,6 @@ namespace DocQuery.Pages
         private string messageInput = string.Empty;
         private int noSentence = 5;
         string? fileName;
-        MultipartFormDataContent dataContent = [];
 
         /// <summary>
         /// Regeneration of LLM response for particular query using it's index
@@ -22,6 +21,7 @@ namespace DocQuery.Pages
 				if (i < Math.Min(SharedDataModel.Messages.Count, SharedDataModel.Responses.Count))
 				{
 					var messageData = new { messageInput = SharedDataModel.Messages[i], fileName, noSentence };
+
 					var jsonContent = System.Text.Json.JsonSerializer.Serialize(messageData);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
@@ -66,6 +66,7 @@ namespace DocQuery.Pages
 				{
 					//invoke ai
 					var messageData = new { messageInput, fileName, noSentence };
+
 					var jsonContent = System.Text.Json.JsonSerializer.Serialize(messageData);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
@@ -73,6 +74,7 @@ namespace DocQuery.Pages
 
 					messageInput = string.Empty;
 					var response = await apiCallService.PostQueryAsync(content);
+
 					if (response.IsSuccessStatusCode)
 					{
 						var res = await response.Content.ReadAsStringAsync();

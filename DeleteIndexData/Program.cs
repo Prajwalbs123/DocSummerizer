@@ -11,6 +11,7 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 var section = configuration.GetSection("SearchCred");
 var index = section.GetSection("index").Value;
+
 var searchClient = new SearchClient(
     new Uri(section.GetSection("uri").Value!),
     index,
