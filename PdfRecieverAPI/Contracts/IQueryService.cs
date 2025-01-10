@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using PdfRecieverAPI.Models;
 
 namespace PdfRecieverAPI.Contracts
 {
@@ -8,6 +9,6 @@ namespace PdfRecieverAPI.Contracts
     public interface IQueryService
     {
         Task<List<string>> GetFileList();
-        Task<string> Query(JsonElement request);
+        Task<string> Query(QueryModel request);
     }
 }

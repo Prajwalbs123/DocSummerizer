@@ -4,6 +4,7 @@ using QuerySearchDLL;
 using GptDLL;
 using System.Text.Json.Nodes;
 using PdfRecieverAPI.Contracts;
+using PdfRecieverAPI.Models;
 
 namespace PdfRecieverAPI.Services
 {
@@ -43,31 +44,16 @@ namespace PdfRecieverAPI.Services
 		/// </summary>
 		/// <param name="request">JsonElement: Parsed user request</param>
 		/// <returns>LLM response to user query based on user specified conditions</returns>
-		public async Task<string> Query(JsonElement request)
+		public async Task<string> Query(QueryModel request)
 		{
 			_logger.LogInformation("User Request posted to Query service");
 			string GptResponse = string.Empty;
 			try
 			{
 				//extracting data from request for processing
-				string? query = "";
-				if (request.TryGetProperty("messageInput", out JsonElement messageElement))
-				{
-					query = messageElement.GetString();
-				}
-
-				string? fileName = null;
-				if (request.TryGetProperty("fileName", out JsonElement fileNameElement))
-				{
-					fileName = fileNameElement!.GetString();
-					if (fileName == "null") fileName = null;
-				}
-
-				int noSentence = 5; //default number of sentence size;
-				if (request.TryGetProperty("noSentence", out JsonElement numberElement))
-				{
-					noSentence = numberElement.GetInt32();
-				}
+				string? query = request.Message;
+				string? fileName = request.FileName;
+				int noSentence = request.NoSentence;
 
 				//call to Azure search to get context;
 				string rawResponse = await querySearch.GetContext(query!, fileName);

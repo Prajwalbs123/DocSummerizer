@@ -4,6 +4,7 @@ using GptDLL;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using PdfRecieverAPI.Contracts;
+using PdfRecieverAPI.Models;
 using PdfRecieverAPI.Services;
 using QuerySearchDLL;
 
@@ -39,7 +40,7 @@ namespace PdfRecieverAPI.Controllers
 		/// <param name="request">user request parsed as JsonElement</param>
 		/// <returns>LLM response to user query</returns>
 		[HttpPost]
-		public async Task<IActionResult> Query([FromBody] JsonElement request)
+		public async Task<IActionResult> Query(QueryModel request)
 		{
 			_logger.LogInformation("Processing Query");
 			return Ok(await queryService.Query(request));

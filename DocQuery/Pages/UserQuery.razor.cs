@@ -20,9 +20,12 @@ namespace DocQuery.Pages
             {
 				if (i < Math.Min(SharedDataModel.Messages.Count, SharedDataModel.Responses.Count))
 				{
-					var messageData = new { messageInput = SharedDataModel.Messages[i], fileName, noSentence };
+                    QueryModel queryModel = new QueryModel();
+                    queryModel.Message = SharedDataModel.Messages[i];
+                    queryModel.NoSentence = noSentence;
+                    queryModel.FileName = fileName;
 
-					var jsonContent = System.Text.Json.JsonSerializer.Serialize(messageData);
+                    var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
 					var response = await apiCallService.PostQueryAsync(content);
@@ -64,13 +67,17 @@ namespace DocQuery.Pages
             {
 				if (!string.IsNullOrWhiteSpace(messageInput))
 				{
-					//invoke ai
-					var messageData = new { messageInput, fileName, noSentence };
 
-					var jsonContent = System.Text.Json.JsonSerializer.Serialize(messageData);
+                    SharedDataModel.Messages.Add(messageInput);
+                    //invoke ai
+                    QueryModel queryModel = new QueryModel();
+                    queryModel.Message = messageInput;
+                    queryModel.NoSentence = noSentence;
+                    queryModel.FileName = fileName;
+
+					var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
-					SharedDataModel.Messages.Add(messageInput);
 
 					messageInput = string.Empty;
 					var response = await apiCallService.PostQueryAsync(content);
