@@ -34,20 +34,20 @@ namespace GptDLL
 				history.AddSystemMessage($"You are a useful assistant who provides appropriate responses to user queries based on the provided context.");
 				history.AddUserMessage($@"-If there is appropriate context : {context} available for the user query: {query}, summarize the context based on the query in at most the specified number of sentences : {noSentence}, considering the given reference : {reference}.
 				 -Else, generate the response based on references from the Internet for the query : {query} in at most the specified number of sentences : {noSentence}, and specify the unavailability of context clearly to the user, and provide references for your response.
-				output format: 
-					Ai response: [Your response here]
+				output format:
+					Ai response: [Your response here, along with Context Availability Information]
 
-					Ai References: [Reference to Internet-based response]
+					Ai References: [Reference links to Internet-based response]
 
-					Reference: {reference}");
+					Context Reference: {reference}");
 
 				var response = await chatService.GetChatMessageContentAsync(history);
-				_logger.LogInformation("successful response from LLM model ");
+				_logger.LogInformation("successful response from LLM model "); 
 				gptResponse = response.ToString();
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return gptResponse;
@@ -75,7 +75,7 @@ namespace GptDLL
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return GptSummaryResponse;

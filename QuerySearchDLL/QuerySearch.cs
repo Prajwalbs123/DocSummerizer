@@ -36,7 +36,7 @@ namespace QuerySearchDLL
 		/// <param name="query">string: user query</param>
 		/// <param name="fileName">string nullable: filename for reference</param>
 		/// <returns>string: Context for LLM</returns>
-		public async Task<string> GetContext(string query, string? fileName)
+		public async Task<string> GetContext(IList<ReadOnlyMemory<float>> QueryEmbbeddings,string queryText, string? fileName)
 		{
 			_logger.LogInformation("Query Recieved by GetContext function of QueryClass");
 			string SearchResponse = string.Empty;
@@ -53,20 +53,24 @@ namespace QuerySearchDLL
 					filterQuery = null;
 				}
 
+
 				SearchOptions searchOptions = new SearchOptions()
 				{
-					//QueryType = SearchQueryType.Semantic,
+					QueryType = SearchQueryType.Full,
+					VectorSearch = new()
+					{
+						Queries = { new VectorizedQuery(QueryEmbbeddings[0]){ KNearestNeighborsCount=4,Fields = { "embedding" } } }
+					},
 					Filter = filterQuery,
 					Size = 1
 				};
-
-				var result = await searchClient.SearchAsync<SearchDocument>(query, options: searchOptions);
+				var result = await searchClient.SearchAsync<SearchDocument>(queryText,options: searchOptions);
 				SearchResponse = result.GetRawResponse().Content.ToString();
 				_logger.LogInformation("Processed query to get SearchResponse");
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"error: {ex.Message}");
+				_logger.LogError($"error: {ex.Message}");
 			}
 
 			return SearchResponse;
@@ -105,7 +109,7 @@ namespace QuerySearchDLL
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return resFiles;

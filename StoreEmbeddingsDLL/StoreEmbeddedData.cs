@@ -34,6 +34,25 @@ namespace StoreEmbeddingsDLL {
 				);
 
 		/// <summary>
+		///		Using Embedding model to convert user query to embeddings
+		/// </summary>
+		/// <param name="query">string: User Query</param>
+		/// <returns>IList ReadOnly Float: Embeddings</returns>
+		public async Task<IList<ReadOnlyMemory<float>>> QueryEmbed(string query)
+		{
+			IList<ReadOnlyMemory<float>> QueryEmbeddings = [];
+			try
+			{
+				QueryEmbeddings = await textEmbeddingService.GenerateEmbeddingsAsync([query]);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError($"Error: {ex.Message}");
+			}
+			return QueryEmbeddings;
+
+		}
+		/// <summary>
 		///     carry out embedding of chunks and storing of those embeddings into azure search's indexes
 		/// </summary>
 		/// <param name="chunks">List of string:utilized as chunks to get back it's embedded data</param>
@@ -51,7 +70,7 @@ namespace StoreEmbeddingsDLL {
 				{
 					var document = new SearchDocument
 				{
-					{"id",fileList+"_"+i.ToString() },
+					{"id",$"{fileList}_{i.ToString()}" },
 					{"embedding",ret[i].Span.ToArray() },
 					{"original_text", new List<string> {chunks[i]} },
 					{"reference", fileName }
@@ -103,5 +122,6 @@ namespace StoreEmbeddingsDLL {
 
             return configuration["SearchCred:index"]!;
         }
+
     }
 }

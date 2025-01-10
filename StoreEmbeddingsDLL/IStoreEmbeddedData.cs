@@ -3,7 +3,8 @@ namespace StoreEmbeddingsDLL
 {
 	public interface IStoreEmbeddedData
 	{
-		Task Embed(List<string> chunks, string fileName);
+		Task<IList<ReadOnlyMemory<float>>> QueryEmbed(string query);
+        Task Embed(List<string> chunks, string fileName);
 		Task<string> DeleteAllFiles();
 	}
 }

@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using DocQuery.Model;
 
 namespace DocQuery.Pages
 {
@@ -19,15 +20,11 @@ namespace DocQuery.Pages
 		InputFile? inputFile;
 		IJSObjectReference? _module, _dropZoneInstance;
 		MultipartFormDataContent Content = [];
-
+		IBrowserFile? File;
 		string summaryResult = string.Empty;
 		string FileText = string.Empty;
 		string FileName = string.Empty;
 
-		/// <summary>
-		///		Initialization of File List
-		/// </summary>
-		/// <returns></returns>
 		protected override void OnInitialized()
 		{
             try
@@ -109,8 +106,8 @@ namespace DocQuery.Pages
 				}
 				else
 				{
-					string ApiResponse  = await apiCallService.PostFileAsync(Content);
 
+					string ApiResponse  = await apiCallService.PostFileAsync(Content);
 					Content.Dispose();
 					Content = [];
 					
@@ -135,10 +132,19 @@ namespace DocQuery.Pages
 			{
 				summaryResult = string.Empty;
 				StateHasChanged();
-				var file = e.File;
-				var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 1024 * 1024 * 500)); // 500 MB limit
-				fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-				Content.Add(fileContent, "file", file.Name);
+				File = e.File;
+				FileName = File.Name;
+                foreach (var files in SharedDataModel.SharedFileList)
+                {
+                    if (files == FileName)
+                    {
+						FileName = $"{Guid.NewGuid()}_{FileName}";
+                    }
+                }
+                var fileContent = new StreamContent(File.OpenReadStream(maxAllowedSize: 1024 * 1024 * 500)); // 500 MB limit
+				fileContent.Headers.ContentType = new MediaTypeHeaderValue(File.ContentType);
+
+				Content.Add(fileContent,"file", FileName);
 			}
 			catch(Exception ex) 
 			{
@@ -146,6 +152,9 @@ namespace DocQuery.Pages
 			}
 		}
 
+		/// <summary>
+		/// Delete all files stored in Index
+		/// </summary>
 		public async void DeleteIndexData()
 		{
 			try

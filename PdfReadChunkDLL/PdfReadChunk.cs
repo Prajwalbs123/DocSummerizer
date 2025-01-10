@@ -38,7 +38,7 @@ namespace PdfReadChunkDLL
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return text;
@@ -82,7 +82,7 @@ namespace PdfReadChunkDLL
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return chunks;

@@ -5,6 +5,7 @@ using GptDLL;
 using System.Text.Json.Nodes;
 using PdfRecieverAPI.Contracts;
 using PdfRecieverAPI.Models;
+using StoreEmbeddingsDLL;
 
 namespace PdfRecieverAPI.Services
 {
@@ -14,11 +15,12 @@ namespace PdfRecieverAPI.Services
 	/// <param name="_logger">DI of ILogger: To Log Information and Errors</param>
 	/// <param name="querySearch">DI of IQuerySearc: DLL to retrive context from Azure ai search index</param>
 	/// <param name="gptCall">DI of IGptCall: RAG using context and user Query</param>
-    public class QueryService(ILogger<QueryService> _logger, IQuerySearch querySearch, IGptCall gptCall) : IQueryService
+    public class QueryService(ILogger<QueryService> _logger, IQuerySearch querySearch, IGptCall gptCall, IStoreEmbeddedData storeEmbeddedData) : IQueryService
 	{
 		private readonly ILogger<QueryService> _logger = _logger;
 		private readonly IQuerySearch querySearch = querySearch;
 		private readonly IGptCall gptCall = gptCall;
+		private readonly IStoreEmbeddedData storeEmbeddedData = storeEmbeddedData;
 
 		/// <summary>
 		///		Get Documents names from search index
@@ -56,7 +58,8 @@ namespace PdfRecieverAPI.Services
 				int noSentence = request.NoSentence;
 
 				//call to Azure search to get context;
-				string rawResponse = await querySearch.GetContext(query!, fileName);
+				var queryEmbeddings = await storeEmbeddedData.QueryEmbed(query);
+				string rawResponse = await querySearch.GetContext(queryEmbeddings,query!, fileName);
 
 				//Deserializing rawResponse
 				JsonObject jsonValue = JsonSerializer.Deserialize<JsonObject>(rawResponse)!;
@@ -72,6 +75,7 @@ namespace PdfRecieverAPI.Services
 				}
 				else
 				{
+					_logger.LogWarning("Context Unavailable");
 					searchScore = 0.0;
 					Message = "";
 					reference = "Internet";
