@@ -65,19 +65,19 @@ namespace PdfRecieverAPI.Services
 			}
 		}
 
-		public async Task<string> DeleteAllFilesAsync()
+		public async Task<string> DeleteFileAsync(string? fileId)
 		{
-			string indexName = string.Empty;
+			string FileName = string.Empty;
 			try
 			{
-				indexName = await storeEmbeddedData.DeleteAllFiles();
-                _logger.LogInformation($"{indexName} Data Deleted Successful");
+				FileName = await storeEmbeddedData.DeleteFile(fileId);
+                _logger.LogInformation($"{FileName} Data Deleted Successful");
             }
             catch(Exception ex)
 			{
 				_logger.LogError($"Error: {ex.Message}");
 			}
-			return indexName;
+			return FileName;
 		}
 
     }

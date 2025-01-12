@@ -46,7 +46,7 @@ namespace QuerySearchDLL
 				string? filterQuery;
 				if (fileId != null)
 				{
-					filterQuery = $"fileId eq '{fileId}'"; //fileID
+					filterQuery = $"fileId eq '{fileId}'";
 				}
 				else
 				{

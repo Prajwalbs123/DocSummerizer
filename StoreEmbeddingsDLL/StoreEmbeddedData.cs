@@ -95,20 +95,33 @@ namespace StoreEmbeddingsDLL {
         /// Delete all Index data
         /// </summary>
         /// <returns>String: index name</returns>
-        public async Task<string> DeleteAllFiles()
+        public async Task<string> DeleteFile(string? fileId)
         {
+			JsonNode res = string.Empty;
             try
             {
                 _logger.LogInformation("Deleting data...");
+                string? filterQuery;
+                if (fileId != null)
+                {
+                    filterQuery = $"fileId eq '{fileId}'";
+                }
+                else
+                {
+                    filterQuery = null;
+                }
+
                 var searchAll = new SearchOptions()
                 {
-                    Size = 1000
+					Filter = filterQuery
                 };
 
-                var AllFiles = await searchClient.SearchAsync<SearchDocument>("*", searchAll);
+                var AllFiles = await searchClient.SearchAsync<SearchDocument>(searchAll);
                 var AllData = AllFiles.GetRawResponse().Content.ToString();
                 JsonObject json = JsonSerializer.Deserialize<JsonObject>(AllData)!;
                 var files = json["value"]?.AsArray()!;
+				if (fileId != null) res = json?["value"]?[0]?["reference"]!;
+				else res = "All Files Deleted";
 
                 foreach (var file in files)
                 {
@@ -123,7 +136,7 @@ namespace StoreEmbeddingsDLL {
                 _logger.LogError($"Error: {ex.Message}");
             }
 
-            return configuration["SearchCred:index"]!;
+            return res.ToString();
         }
 
     }

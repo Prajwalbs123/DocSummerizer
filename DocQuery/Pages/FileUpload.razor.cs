@@ -19,7 +19,7 @@ namespace DocQuery.Pages
 		IBrowserFile? File;
 		string summaryResult = string.Empty;
 		string FileName = string.Empty;
-
+		string? fileId;
 		protected override void OnInitialized()
 		{
             try
@@ -83,7 +83,7 @@ namespace DocQuery.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, $"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 		}
 
@@ -154,10 +154,12 @@ namespace DocQuery.Pages
 		{
 			try
 			{
-                await JS.InvokeVoidAsync("confirm","Do you want to Delete Index Data");
-                var index = await apiCallService.DeleteAllFiles();
-                await JS.InvokeVoidAsync("alert", $"{index} data is deleted");
-                await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
+				if (await JS.InvokeAsync<bool>("confirm", "Do you want to delete selected file(s)?"))
+				{
+					var filename = await apiCallService.DeleteFile(fileId);
+					await JS.InvokeVoidAsync("alert", $"{filename} is deleted");
+					await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
+				}
             }
 			catch (Exception ex) { logger.LogError($"Error: {ex.Message}"); }
         }

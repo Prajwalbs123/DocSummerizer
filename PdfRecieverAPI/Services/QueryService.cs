@@ -59,7 +59,7 @@ namespace PdfRecieverAPI.Services
 
 				//call to Azure search to get context;
 				var queryEmbeddings = await storeEmbeddedData.QueryEmbed(query);
-				string rawResponse = await querySearch.GetContext(queryEmbeddings,query!, fileId);
+				string rawResponse = await querySearch.GetContext(queryEmbeddings,query!,fileId);
 
 				//Deserializing rawResponse
 				JsonObject jsonValue = JsonSerializer.Deserialize<JsonObject>(rawResponse)!;

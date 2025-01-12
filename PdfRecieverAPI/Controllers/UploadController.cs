@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.Mvc;
 using PdfRecieverAPI.Contracts;
+using PdfRecieverAPI.Models;
 
 
 namespace PdfRecieverAPI.Controllers
@@ -27,11 +28,12 @@ namespace PdfRecieverAPI.Controllers
 		{
 			return Ok(await featureManager.IsEnabledAsync("Upload"));
 		}
-		[HttpGet("DeleteAllFiles")]
-		public async Task<IActionResult> DeleteAllFiles()
+		[HttpPost("DeleteFile")]
+		public async Task<IActionResult> DeleteFile(QueryModel request)
 		{
             _logger.LogInformation("Deleting files...");
-            return Ok(await uploadService.DeleteAllFilesAsync());
+
+            return Ok(await uploadService.DeleteFileAsync(request.FileId));
 		}
 
 		/// <summary>

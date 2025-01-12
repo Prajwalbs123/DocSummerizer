@@ -19,9 +19,14 @@ namespace DocQuery.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> DeleteAllFiles()
+        public async Task<string> DeleteFile(string? fileId)
         {
-            var respose = await httpClient.GetAsync(@"Upload/DeleteAllFiles");
+            QueryModel queryModel = new QueryModel();
+            queryModel.FileId = fileId;
+            var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
+            HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+
+            var respose = await httpClient.PostAsync(@"Upload/DeleteFile",content);
             return await respose.Content.ReadAsStringAsync();
         }
         //query controller
