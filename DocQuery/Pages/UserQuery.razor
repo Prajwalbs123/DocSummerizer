@@ -1,6 +1,6 @@
 ﻿@page "/Query"
 @using Microsoft.AspNetCore.Components.Web
-@using DocQuery.Contracts;
+@using DocQuery.Contracts
 @using DocQuery.Model
 @inject ILogger<UserQuery> logger;
 @inject IApiCallService apiCallService;
@@ -9,12 +9,12 @@
 
 <h1>Summarize your Documents</h1>
 <div class="params">
-<select @bind="@fileName">
+<select @bind="@fileId">
     <option value=null selected>select a File</option>
     @foreach (var val in SharedDataModel.SharedFileList)
     {
 
-        <option value="@val">@val</option>
+        <option value="@val.Key">@val.Value</option>
     }
 </select>
 <div class="slider">

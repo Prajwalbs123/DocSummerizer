@@ -1,11 +1,7 @@
-
 using System.Net.Http.Headers;
-using System.Text.Json.Nodes;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
-using DocQuery.Model;
 
 namespace DocQuery.Pages
 {
@@ -22,7 +18,6 @@ namespace DocQuery.Pages
 		MultipartFormDataContent Content = [];
 		IBrowserFile? File;
 		string summaryResult = string.Empty;
-		string FileText = string.Empty;
 		string FileName = string.Empty;
 
 		protected override void OnInitialized()
@@ -36,7 +31,7 @@ namespace DocQuery.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, $"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 		}
 
@@ -59,7 +54,7 @@ namespace DocQuery.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex,$"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 		}
 
@@ -118,7 +113,7 @@ namespace DocQuery.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex, $"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 		}
 
@@ -134,14 +129,14 @@ namespace DocQuery.Pages
 				StateHasChanged();
 				File = e.File;
 				FileName = File.Name;
-                foreach (var files in SharedDataModel.SharedFileList)
-                {
-                    if (files == FileName)
-                    {
-						FileName = $"{Guid.NewGuid()}_{FileName}";
-                    }
-                }
-                var fileContent = new StreamContent(File.OpenReadStream(maxAllowedSize: 1024 * 1024 * 500)); // 500 MB limit
+				//foreach (var files in SharedDataModel.SharedFileList)
+				//{
+				//	if (files.Value == FileName)
+				//	{
+				//		FileName = $"{Guid.NewGuid()}_{FileName}";
+				//	}
+				//}
+				var fileContent = new StreamContent(File.OpenReadStream(maxAllowedSize: 1024 * 1024 * 500)); // 500 MB limit
 				fileContent.Headers.ContentType = new MediaTypeHeaderValue(File.ContentType);
 
 				Content.Add(fileContent,"file", FileName);
@@ -159,10 +154,10 @@ namespace DocQuery.Pages
 		{
 			try
 			{
-				var index = await apiCallService.DeleteAllFiles();
+                await JS.InvokeVoidAsync("confirm","Do you want to Delete Index Data");
+                var index = await apiCallService.DeleteAllFiles();
                 await JS.InvokeVoidAsync("alert", $"{index} data is deleted");
                 await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
-                logger.LogInformation($"{index} data is deleted");
             }
 			catch (Exception ex) { logger.LogError($"Error: {ex.Message}"); }
         }
@@ -188,7 +183,7 @@ namespace DocQuery.Pages
 			}
 			catch (Exception ex)
 			{
-				logger.LogError(ex,$"Error: {ex.Message}");
+				logger.LogError($"Error: {ex.Message}");
 			}
 			
 		}

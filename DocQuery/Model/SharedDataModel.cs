@@ -9,7 +9,7 @@
         public static List<string> Responses { get; set; } = [];
 
         public static List<string> datetime { get; set; } = [];
-        public static List<string> SharedFileList { get; set; } = [];
+        public static Dictionary<string,string> SharedFileList { get; set; } = [];
 
     }
 }

@@ -66,15 +66,18 @@ namespace StoreEmbeddingsDLL {
 				IList<ReadOnlyMemory<float>> ret = await textEmbeddingService.GenerateEmbeddingsAsync(chunks);
 
 				var documents = new List<SearchDocument>();
+				
+				Guid fileId = Guid.NewGuid();
 				for (int i = 0; i < chunks.Count; i++)
 				{
 					var document = new SearchDocument
-				{
-					{"id",$"{fileList}_{i.ToString()}" },
-					{"embedding",ret[i].Span.ToArray() },
-					{"original_text", new List<string> {chunks[i]} },
-					{"reference", fileName }
-				};
+					{
+						{"id",$"{i}_{fileList}_{Guid.NewGuid()}" },
+						{"embedding",ret[i].Span.ToArray() },
+						{"original_text", new List<string> {chunks[i]} },
+						{"reference", fileName },
+						{"fileId",fileId.ToString() }
+					};
 
 					documents.Add(document);
 				}

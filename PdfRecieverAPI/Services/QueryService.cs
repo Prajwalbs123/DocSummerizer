@@ -26,10 +26,10 @@ namespace PdfRecieverAPI.Services
 		///		Get Documents names from search index
 		/// </summary>
 		/// <returns>String List: file names from azure ai search index</returns>
-		public async Task<List<string>> GetFileList()
+		public async Task<Dictionary<string,string>> GetFileList()
 		{
 			_logger.LogInformation("GetFileList request received at QueryService");
-			List<string> files = [];
+			Dictionary<string,string> files = [];
 			try
 			{
 				files = await querySearch.GetFilesFromIndex();
@@ -54,12 +54,12 @@ namespace PdfRecieverAPI.Services
 			{
 				//extracting data from request for processing
 				string? query = request.Message;
-				string? fileName = request.FileName;
 				int noSentence = request.NoSentence;
+				string? fileId = request.FileId;
 
 				//call to Azure search to get context;
 				var queryEmbeddings = await storeEmbeddedData.QueryEmbed(query);
-				string rawResponse = await querySearch.GetContext(queryEmbeddings,query!, fileName);
+				string rawResponse = await querySearch.GetContext(queryEmbeddings,query!, fileId);
 
 				//Deserializing rawResponse
 				JsonObject jsonValue = JsonSerializer.Deserialize<JsonObject>(rawResponse)!;

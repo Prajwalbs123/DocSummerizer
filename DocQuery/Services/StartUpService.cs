@@ -30,11 +30,11 @@ namespace DocQuery.Services
                     if (list.IsSuccessStatusCode)
                     {
                         var stringFile = await list.Content.ReadAsStringAsync();
-                        string[] FileList = JsonSerializer.Deserialize<string[]>(stringFile)!;
+                        Dictionary<string,string> FileList = JsonSerializer.Deserialize<Dictionary<string,string>>(stringFile)!;
 
                         foreach (var item in FileList)
                         {
-                            SharedDataModel.SharedFileList.Add(item);
+                            SharedDataModel.SharedFileList.Add(item.Key,item.Value);
                         }
                     }
 
@@ -43,7 +43,7 @@ namespace DocQuery.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error: {ex.Message}");
+                _logger.LogError($"Error: {ex.Message}");
             }
 
 

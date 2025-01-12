@@ -6,7 +6,7 @@ namespace DocQuery.Pages
     {
         private string messageInput = string.Empty;
         private int noSentence = 5;
-        string? fileName;
+        string? fileId;
 
         /// <summary>
         /// Regeneration of LLM response for particular query using it's index
@@ -23,7 +23,7 @@ namespace DocQuery.Pages
                     QueryModel queryModel = new QueryModel();
                     queryModel.Message = SharedDataModel.Messages[i];
                     queryModel.NoSentence = noSentence;
-                    queryModel.FileName = fileName;
+                    queryModel.FileId = fileId;
 
                     var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
@@ -73,7 +73,7 @@ namespace DocQuery.Pages
                     QueryModel queryModel = new QueryModel();
                     queryModel.Message = messageInput;
                     queryModel.NoSentence = noSentence;
-                    queryModel.FileName = fileName;
+                    queryModel.FileId = fileId;
 
 					var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
 					HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");

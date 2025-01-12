@@ -8,7 +8,7 @@ namespace PdfRecieverAPI.Contracts
     /// </summary>
     public interface IQueryService
     {
-        Task<List<string>> GetFileList();
+        Task<Dictionary<string,string>> GetFileList();
         Task<string> Query(QueryModel request);
     }
 }

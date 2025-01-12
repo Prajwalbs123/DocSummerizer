@@ -17,7 +17,7 @@
             <option selected disabled>Uploaded Files </option>
             @foreach (var val in SharedDataModel.SharedFileList)
             {
-                <option disabled>@val</option>
+                <option value="@val.Key">@val.Value</option>
             }
         </select>
         <button class="btn btn-danger" type="button" @onclick="DeleteIndexData">Delete All Files</button>

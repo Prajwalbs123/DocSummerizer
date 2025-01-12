@@ -36,7 +36,7 @@ namespace QuerySearchDLL
 		/// <param name="query">string: user query</param>
 		/// <param name="fileName">string nullable: filename for reference</param>
 		/// <returns>string: Context for LLM</returns>
-		public async Task<string> GetContext(IList<ReadOnlyMemory<float>> QueryEmbbeddings,string queryText, string? fileName)
+		public async Task<string> GetContext(IList<ReadOnlyMemory<float>> QueryEmbbeddings,string queryText, string? fileId)
 		{
 			_logger.LogInformation("Query Recieved by GetContext function of QueryClass");
 			string SearchResponse = string.Empty;
@@ -44,9 +44,9 @@ namespace QuerySearchDLL
 			try
 			{
 				string? filterQuery;
-				if (fileName != null)
+				if (fileId != null)
 				{
-					filterQuery = $"reference eq '{fileName}'";
+					filterQuery = $"fileId eq '{fileId}'"; //fileID
 				}
 				else
 				{
@@ -70,7 +70,7 @@ namespace QuerySearchDLL
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError($"error: {ex.Message}");
+				_logger.LogError($"Error: {ex.Message}");
 			}
 
 			return SearchResponse;
@@ -80,11 +80,12 @@ namespace QuerySearchDLL
 		///     Get all the reference fileName stored in azure search index
 		/// </summary>
 		/// <returns>List of string: FileNames stored in azure search index</returns>
-		public async Task<List<string>> GetFilesFromIndex()
+		public async Task<Dictionary<string,string>> GetFilesFromIndex()
 		{
-			_logger.LogInformation("Processing file Information");
-			List<string> resFiles = [];
-			try
+			_logger.LogInformation("Processing file Information...");
+            Dictionary<string, string> UniqueFiles = new Dictionary<string, string>();
+
+            try
 			{
 				var searchAll = new SearchOptions()
 				{
@@ -95,24 +96,26 @@ namespace QuerySearchDLL
 				var AllData = AllFiles.GetRawResponse().Content.ToString();
 				JsonObject json = JsonSerializer.Deserialize<JsonObject>(AllData)!;
 				var files = json["value"]?.AsArray()!;
-				SortedSet<string> uniqueFiles = new SortedSet<string>();
 
 				foreach (var file in files)
 				{
-					uniqueFiles.Add(file?["reference"]?.ToString()!);
+					if (!UniqueFiles.ContainsKey(file?["fileId"]?.ToString()!))
+					{
+						UniqueFiles.Add(file?["fileId"]?.ToString()!, file?["reference"]?.ToString()!);
+					}
 				}
-				foreach (var file in uniqueFiles)
-				{
-					resFiles.Add(file!);
-				}
-				_logger.LogInformation($"{resFiles.Count} files are present in index");
+				//foreach (var file in UniqueFiles)
+				//{
+				//	resFiles.Add(file.Value!);
+				//}
+				_logger.LogInformation($"{UniqueFiles.Count} files are present in index");
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError($"Error: {ex.Message}");
 			}
 
-			return resFiles;
+			return UniqueFiles;
 		}
 	}
 }
