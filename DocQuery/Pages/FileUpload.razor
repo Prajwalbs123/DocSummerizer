@@ -14,7 +14,7 @@
     <h3>Upload File to Index(Azure Search)</h3>
     <div class="file-area">
         <select @bind="@fileId">
-            <option selected disabled>Uploaded Files </option>
+            <option selected value="@string.Empty">All Files </option>
             @foreach (var val in SharedDataModel.SharedFileList)
             {
                 <option value="@val.Key">@val.Value</option>

@@ -154,11 +154,15 @@ namespace DocQuery.Pages
 		{
 			try
 			{
-				if (await JS.InvokeAsync<bool>("confirm", "Do you want to delete selected file(s)?"))
+				string question = "all the files?";
+				if (fileId == string.Empty) fileId = null;
+				if (fileId != null) { question = "the selected file?"; }
+
+				if (await JS.InvokeAsync<bool>("confirm", $"Do you want to delete {question}"))
 				{
 					var filename = await apiCallService.DeleteFile(fileId);
-					await JS.InvokeVoidAsync("alert", $"{filename} is deleted");
-					await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
+					await JS.InvokeVoidAsync("alert", $"{filename} deleted");
+					if(filename != "No file exists to be") await JS.InvokeVoidAsync("eval", "window.location.reload(true)");
 				}
             }
 			catch (Exception ex) { logger.LogError($"Error: {ex.Message}"); }

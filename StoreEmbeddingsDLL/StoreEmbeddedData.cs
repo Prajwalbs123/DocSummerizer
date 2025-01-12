@@ -120,8 +120,10 @@ namespace StoreEmbeddingsDLL {
                 var AllData = AllFiles.GetRawResponse().Content.ToString();
                 JsonObject json = JsonSerializer.Deserialize<JsonObject>(AllData)!;
                 var files = json["value"]?.AsArray()!;
-				if (fileId != null) res = json?["value"]?[0]?["reference"]!;
-				else res = "All Files Deleted";
+
+				if (fileId != null) res = $"{json?["value"]?[0]?["reference"]!} is";
+				else if (files.Count != 0) res = "All Files are";
+				else res = "No file exists to be";
 
                 foreach (var file in files)
                 {
