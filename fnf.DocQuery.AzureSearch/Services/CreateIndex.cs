@@ -24,27 +24,49 @@ namespace fnf.DocQuery.AzureSearch.Services
                 logger.LogInformation("Creating Index....");
                 var fieldBuilder = new FieldBuilder();
                 var fields = fieldBuilder.Build(typeof(IndexModel));
-                var vectorProfile = new VectorSearch
+
+                IDictionary<string, double> Weights = new Dictionary<string, double>();
+                Weights.Add(new KeyValuePair<string, double>(configuration["ScoreSettings:FieldValue"]!, Convert.ToDouble(configuration["ScoreSettings:WeightValue"])));
+                var scoringProfile = new ScoringProfile("embeddingprofile")
                 {
+                    TextWeights = new TextWeights(Weights)
+                };
 
-
+                var vectorProfile = new VectorSearch()
+                {
                     Algorithms =
                     {
                         new HnswAlgorithmConfiguration("hnsw")
                         {
-                            Parameters = new HnswParameters
+                            Parameters = new HnswParameters()
                             {
-                                M = 4,
-                                EfConstruction =200,
-                                EfSearch = 100
+                                M = Convert.ToInt32(configuration["IndexSettings:biDirectionalLink(M)"]),
+                                EfConstruction = Convert.ToInt32(configuration["IndexSettings:EfConstruct"]),
+                                EfSearch = Convert.ToInt32(configuration["IndexSettings:EfSearch"])
                             }
                         }
                     },
                     Profiles =
                     {
-
-                        new VectorSearchProfile("my-vector-profile","hnsw")
+                        new VectorSearchProfile("my-vector-profile", "hnsw")
+                        {
+                            VectorizerName = "my-vectorizer"
+                        }
+                    },
+                    Vectorizers =
+                    {
+                        new AzureOpenAIVectorizer("my-vectorizer")
+                        {
+                            Parameters = new AzureOpenAIVectorizerParameters()
+                            {
+                                ApiKey = configuration["AzureCred:key"],
+                                DeploymentName = configuration["AzureCred:embeddingModel"],
+                                ModelName = configuration["AzureCred:embeddingModel"],
+                                ResourceUri = new Uri(configuration["AzureCred:endpoint"]!)
+                            }
+                        }
                     }
+                    
                 };
 
                 var index = new SearchIndex(configuration["SearchCred:index"])
@@ -52,8 +74,10 @@ namespace fnf.DocQuery.AzureSearch.Services
                     Fields = fields,
                     VectorSearch = vectorProfile
                 };
+                index.ScoringProfiles.Add(scoringProfile);
 
                 await indexClient.CreateOrUpdateIndexAsync(index);
+                logger.LogInformation("Index Created");
             }
             catch (Exception ex)
             {

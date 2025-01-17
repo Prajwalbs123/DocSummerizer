@@ -17,7 +17,6 @@ namespace fnf.DocQuery.OpenAi.Services
                 configuration["AzureCred:endpoint"]!,
                 configuration["AzureCred:key"]!
                 );
-
         /// <summary>
         /// Asyncronous call to get LLM response for the provided query and context
         /// </summary>
