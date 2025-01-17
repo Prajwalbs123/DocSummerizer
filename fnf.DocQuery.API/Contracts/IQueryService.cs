@@ -1,7 +1,6 @@
-﻿using System.Text.Json;
-using PdfRecieverAPI.Models;
+﻿using fnf.DocQuery.API.Models;
 
-namespace PdfRecieverAPI.Contracts
+namespace fnf.DocQuery.API.Contracts
 {
     /// <summary>
     ///     Interface implemented by QueryService

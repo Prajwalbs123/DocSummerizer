@@ -1,15 +1,10 @@
-using Microsoft.SemanticKernel;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.FeatureManagement;
-using PdfRecieverAPI.Services;
-using GptDLL;
-using QuerySearchDLL;
-using StoreEmbeddingsDLL;
-using PdfReadChunkDLL;
-using PdfRecieverAPI.Contracts;
+using fnf.DocQuery.API.Helper;
+using fnf.DocQuery.AzureSearch.Services;
+using fnf.DocQuery.AzureSearch.Model;
+using fnf.DocQuery.AzureSearch.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
-
 //azure appconfiguration access for feature flag
 var connectionString = builder.Configuration.GetConnectionString("DocConfig");
 builder.Configuration.AddAzureAppConfiguration(options =>
@@ -35,20 +30,14 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin();
     });
 });
-builder.Services.AddSingleton<IPdfReadChunk,PdfReadChunk>();
-builder.Services.AddSingleton<IGptCall,GptCall>();
-builder.Services.AddSingleton<IStoreEmbeddedData,StoreEmbeddedData>();
-builder.Services.AddSingleton<IQueryService,QueryService>();
-builder.Services.AddSingleton<IUploadService,UploadService>();
-builder.Services.AddSingleton<IQuerySearch,QuerySearch>();
+builder.Services.AddLogging();
 builder.Services.AddFeatureManagement();
-
-//Adding Logging
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
+ServiceRegisterar.Register(builder.Services);
 
 var app = builder.Build();
+
+var createIndex = app.Services.GetRequiredService<ICreateIndex>();
+await createIndex.Create();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

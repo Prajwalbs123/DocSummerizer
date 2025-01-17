@@ -1,4 +1,4 @@
-﻿namespace PdfRecieverAPI.Contracts
+﻿namespace fnf.DocQuery.API.Contracts
 {
     public interface IUploadService
     {

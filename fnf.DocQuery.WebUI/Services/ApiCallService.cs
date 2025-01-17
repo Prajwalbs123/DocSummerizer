@@ -23,6 +23,9 @@ namespace fnf.DocQuery.WebUI.Services
         {
             QueryModel queryModel = new QueryModel();
             queryModel.FileId = fileId;
+            queryModel.Message = "Deleteing";
+            queryModel.NoSentence = 1;
+
             var jsonContent = System.Text.Json.JsonSerializer.Serialize(queryModel);
             HttpContent content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
