@@ -29,7 +29,8 @@ namespace fnf.DocQuery.API.Helper
             services.AddSingleton<IUploadSearch, UploadSearch>();
             services.AddSingleton<IDeleteAzureSearchFile, DeleteAzureSearchFile>();
             services.AddSingleton<IQuerySearch, QuerySearch>();
-
+            services.AddSingleton<IAddScoringProfile, AddScoringProfile>();
+            services.AddSingleton<IAddVectorSearch, AddVectorSearch>();
             //fnf.DocQuery.OpenAi
             services.AddSingleton<IGetEmbeddings, GetEmbeddings>();
             services.AddSingleton<IGptCall, GptCall>();
